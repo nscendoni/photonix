@@ -9,7 +9,7 @@ import subprocess
 from django.utils.timezone import utc
 
 from photonix.photos.models import Camera, Lens, Photo, PhotoFile, Task, Library, Tag, PhotoTag
-from photonix.photos.utils.metadata import PhotoMetadata, parse_datetime, parse_gps_location, get_mimetype
+from photonix.photos.utils.metadata import PhotoMetadata, parse_datetime, parse_gps_location, get_mimetype, get_date_from_filename
 from photonix.web.utils import logger
 
 
@@ -55,11 +55,16 @@ def record_photo(path, library, inotify_event_type=None):
 
     metadata = PhotoMetadata(path)
     date_taken = None
-    possible_date_keys = ['Create Date', 'Date/Time Original', 'Date Time Original', 'Date/Time', 'Date Time', 'GPS Date/Time', 'File Modification Date/Time']
+    possible_date_keys = ['Create Date', 'Date/Time Original', 'Date Time Original', 'Date/Time', 'Date Time', 'GPS Date/Time', 'Profile Date Time' ]
     for date_key in possible_date_keys:
         date_taken = parse_datetime(metadata.get(date_key))
         if date_taken:
             break
+    if not date_taken:
+       date_taken = get_date_from_filename(path)
+    if not date_taken:
+       date_taken = parse_datetime(metadata.get('File Modification Date/Time')) 
+
     # If EXIF data not found.
     date_taken = date_taken or datetime.strptime(time.ctime(os.path.getctime(path)), "%a %b %d %H:%M:%S %Y")
 
@@ -103,7 +108,16 @@ def record_photo(path, library, inotify_event_type=None):
     if date_taken:
         try:
             # TODO: Match on file number/file name as well
-            photo = Photo.objects.get(taken_at=date_taken)
+            photo_set = Photo.objects.filter(taken_at=date_taken)
+            file_found = False
+            if photo_set:
+                for photo_entry in photo_set:
+                    if PhotoFile.objects.get(photo_id=photo_entry).base_image_path == path:
+                        file_found = True
+                        photo = photo_entry
+                        break
+            if not file_found:
+                photo = None
         except Photo.DoesNotExist:
             pass
 
@@ -230,3 +244,4 @@ def delete_photofile_and_photo_record(photo_file_obj):
     photo_file_obj.delete()
     if not photo_obj.files.all():
         photo_obj.delete()
+

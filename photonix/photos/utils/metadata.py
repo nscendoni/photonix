@@ -6,7 +6,7 @@ import re
 from subprocess import Popen, PIPE
 
 from django.utils.timezone import utc
-
+from photonix.web.settings import DATE_IN_FILENAME_REGEX
 
 class PhotoMetadata(object):
     def __init__(self, path):
@@ -116,4 +116,46 @@ def get_mimetype(path):
     metadata = PhotoMetadata(path)
     if metadata.data.get('MIME Type'):
         return metadata.data.get('MIME Type')
+    return None
+
+def get_date_from_filename(path):
+    for p in DATE_IN_FILENAME_REGEX:
+        match = re.match(p,path)
+        if match:
+            try:
+                year = match.group("Y")
+            except IndexError:
+                pass
+            try:
+                year = match.group("y")
+                if int(year)>50:
+                    year = "19"+year
+                else:
+                    year = "20"+year
+            except IndexError:
+                pass
+            try:
+                month = match.group("m")
+            except IndexError:
+                pass
+            try:
+                day = match.group("d")
+            except IndexError:
+                pass
+            try:
+                hour = match.group("H")
+            except IndexError:
+                hour = 0
+            try:
+                minute = match.group("M")
+            except IndexError:
+                minute = 0
+            try:
+                second = match.group("S")
+            except IndexError:
+                second = 0
+            try:
+                return datetime(int(year),int(month),int(day),int(hour),int(minute),int(second))
+            except ValueError:
+                pass
     return None
