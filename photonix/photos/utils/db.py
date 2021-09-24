@@ -102,7 +102,7 @@ def record_photo(path, library, inotify_event_type=None):
     photo = None
     if date_taken:
         try:
-            # TODO: Match on file number/file name as well
+            # Fix for issue 347: Photos with the same date are not imported ...
             photo_set = Photo.objects.filter(taken_at=date_taken)
             file_found = False
             if photo_set:
