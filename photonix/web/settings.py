@@ -230,3 +230,8 @@ GRAPHQL_JWT = {
 APPEND_SLASHES = False
 
 CORS_ORIGIN_WHITELIST = []
+
+DATE_IN_FILENAME_REGEX = [
+    r'.*/IMG-(?P<Y>\d{4})(?P<m>\d{2})(?P<d>\d{2})-.*',
+    r'.*/(?P<y>\d\d)-(?P<m>\d{2})-(?P<d>\d{2}) (?P<H>\d{2})-(?P<M>\d{2})-(?P<S>\d{2}) .*'
+]
