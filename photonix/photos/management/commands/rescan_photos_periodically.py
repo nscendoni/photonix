@@ -1,3 +1,4 @@
+from photonix.web.settings import SLEEP_RESCAN
 from time import sleep
 
 from django.conf import settings
@@ -8,7 +9,7 @@ from photonix.photos.utils.organise import rescan_photo_libraries
 from photonix.photos.utils.system import missing_system_dependencies
 from photonix.photos.utils.redis import redis_connection
 from photonix.web.utils import logger
-
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Creates relevant database records for all photos that are in a folder.'
@@ -30,6 +31,7 @@ class Command(BaseCommand):
             while True:
                 with Lock(redis_connection, 'rescan_photos'):
                     self.rescan_photos(options['paths'])
-                sleep(60 * 60)  # Sleep for an hour
+                logger.debug("Sleeping for {} seconds".format(SLEEP_RESCAN))
+                sleep(SLEEP_RESCAN)  # Sleep for an hour
         except KeyboardInterrupt:
             pass
