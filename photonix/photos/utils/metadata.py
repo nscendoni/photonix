@@ -6,7 +6,7 @@ import re
 from subprocess import Popen, PIPE
 
 from django.utils.timezone import utc
-
+from web.settings import DATE_IN_FILENAME_REGEX
 
 class PhotoMetadata(object):
     def __init__(self, path):
@@ -119,9 +119,7 @@ def get_mimetype(path):
     return None
 
 def get_date_from_filename(path):
-    patterns = [r'.*/IMG-(?P<Y>\d{4})(?P<m>\d{2})(?P<d>\d{2})-.*',
-        r'.*/(?P<y>\d\d)-(?P<m>\d{2})-(?P<d>\d{2}) (?P<H>\d{2})-(?P<M>\d{2})-(?P<S>\d{2}) .*']
-    for p in patterns:
+    for p in DATE_IN_FILENAME_REGEX:
         match = re.match(p,path)
         if match:
             try:
