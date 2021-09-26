@@ -87,7 +87,7 @@ def determine_same_file(origpath, destpath, fhc=None):
 
 
 def blacklisted_type(file):
-    if file[-4:].lower() == '.mov' or file[-4:].lower() == '.mp4' or file[-4:].lower() == '.mkv':
+    if file[-4:].lower() == '.mov' or file[-4:].lower() == '.mp4' or file[-4:].lower() == '.mkv' or file[-4:].lower() == '.xmp':
         return True
     if file == '.DS_Store':
         return True

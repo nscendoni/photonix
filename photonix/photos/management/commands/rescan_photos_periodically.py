@@ -30,6 +30,6 @@ class Command(BaseCommand):
             while True:
                 with Lock(redis_connection, 'rescan_photos'):
                     self.rescan_photos(options['paths'])
-                sleep(60 * 60)  # Sleep for an hour
+                sleep(12 * 60 * 60)  # Sleep for an hour
         except KeyboardInterrupt:
             pass
