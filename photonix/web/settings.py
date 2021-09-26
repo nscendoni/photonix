@@ -235,3 +235,5 @@ DATE_IN_FILENAME_REGEX = [
     r'.*/IMG-(?P<Y>\d{4})(?P<m>\d{2})(?P<d>\d{2})-.*',
     r'.*/(?P<y>\d\d)-(?P<m>\d{2})-(?P<d>\d{2}) (?P<H>\d{2})-(?P<M>\d{2})-(?P<S>\d{2}) .*'
 ]
+
+SLEEP_RESCAN = os.environ.get('SLEEP_RESCAN', 60 * 60)
