@@ -8,13 +8,14 @@ from photonix.photos.utils.organise import rescan_photo_libraries
 from photonix.photos.utils.system import missing_system_dependencies
 from photonix.photos.utils.redis import redis_connection
 from photonix.web.utils import logger
-
+import debugpy
 
 class Command(BaseCommand):
     help = 'Creates relevant database records for all photos that are in a folder.'
 
     def add_arguments(self, parser):
         parser.add_argument('--paths', nargs='+', default=[])
+        parser.add_argument('--debug', default=False)
 
     def rescan_photos(self, paths):
         missing = missing_system_dependencies(['exiftool', ])
@@ -26,6 +27,11 @@ class Command(BaseCommand):
         logger.info('Rescan complete')
 
     def handle(self, *args, **options):
+        if options['debug']:
+            debugpy.listen(("0.0.0.0",5678))
+            print("****************** Waiting for debugger attach ************************")
+            debugpy.wait_for_client()
+           
         try:
             while True:
                 with Lock(redis_connection, 'rescan_photos'):
