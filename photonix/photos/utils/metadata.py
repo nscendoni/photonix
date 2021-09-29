@@ -6,7 +6,7 @@ import re
 from subprocess import Popen, PIPE
 
 from django.utils.timezone import utc
-from web.settings import DATE_IN_FILENAME_REGEX
+from photonix.web.settings import DATE_IN_FILENAME_REGEX
 
 class PhotoMetadata(object):
     def __init__(self, path):
