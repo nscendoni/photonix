@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime
 
 from photonix.photos.utils.metadata import PhotoMetadata, parse_gps_location, get_datetime
 
@@ -51,5 +52,12 @@ def test_datetime():
 
     # Some of the date digits are the letter X so fall back to file creation date
     photo_path = str(Path(__file__).parent / 'photos' / 'unreadable_date.jpg')
+    Path(photo_path).touch()
     parsed_datetime = get_datetime(photo_path)
-    assert parsed_datetime.isoformat() == '2021-08-08T21:11:25.231271+00:00'
+    now = datetime.now()
+    # assert parsed_datetime.isoformat() == '2021-08-08T21:11:25.231271+00:00'(
+    assert parsed_datetime.year == now.year and \
+        parsed_datetime.month == now.month and \
+        parsed_datetime.day == now.day and \
+        parsed_datetime.hour ==  now.hour and \
+        parsed_datetime.minute ==  now.minute
